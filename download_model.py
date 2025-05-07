@@ -1,10 +1,15 @@
-# Load model directly
-# from transformers import AutoTokenizer, AutoModelForMaskedLM
-
-# tokenizer = AutoTokenizer.from_pretrained("distilbert/distilbert-base-uncased")
-# model = AutoModelForMaskedLM.from_pretrained("distilbert/distilbert-base-uncased")
-
+import os
 from huggingface_hub import snapshot_download
+
+## Ensure ./model directory exists
+directory = "model"
+try:
+	os.mkdir(directory)
+	print(f"Dir '{directory}' created successfully.")
+except FileExistsError:
+	print(f"Dir '{directory}' already exists...")
+except OSError as error:
+	print(f"Error creating dir: '{directory}': {str(error)}")
 
 ## Safely download model files *without executing* them.
 ## Best practice is to scan files before opening them 
