@@ -12,3 +12,5 @@ python3 -m pip install 'modelscan[tensorflow,h5py]'
 
 echo "Checkinf for KitOps..."
 python3 -m pip install kitops
+
+python3 -m pip install torch
