@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+venv/
+model/
+my_model_package.kit
+.DS_Store
+*.kit
