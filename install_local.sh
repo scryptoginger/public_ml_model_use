@@ -81,20 +81,22 @@ fi
 # 4. Install ModelScan
 echo ""
 echo "Checking for ModelScan..."
-if ! command -v modelscan &> /dev/null; then
-    echo "ModelScan not found. Attempting pip install..."
-    pip install 'modelscan[ tensorflow, h5py ]' || echo "ModelScan installation failed. Please install manually."
-else
-    echo "ModelScan installed successfully!"
-fi
+pip install 'modelscan[ tensorflow, h5py ]'
+# if ! command -v modelscan &> /dev/null; then
+#     echo "ModelScan not found. Attempting pip install..."
+#     pip install 'modelscan[ tensorflow, h5py ]' || echo "ModelScan installation failed. Please install manually."
+# else
+#     echo "ModelScan installed successfully!"
+# fi
 
 
 #5. Install KitOps
 echo ""
 echo "Checking for KitOps..."
+pip install kitops || brew tap kitops-ml/kitops && brew install kitops
 if ! command -v kit &> /dev/null; then
     echo "KitOps not found. Attempting pip install now..."
-    pip install kitops || echo "KitOps installation failed. Please install manually." # OR custom curl/npm/install link
+    pip install kitops || echo "KitOps installation failed. Please install manually." || brew tap kitops-ml/kitops && brew install kitops # OR custom curl/npm/install link
 else
     echo "KitOps is installed"
 fi
