@@ -5,11 +5,11 @@ from huggingface_hub import snapshot_download
 directory = "model"
 try:
 	os.mkdir(directory)
-	print(f"Dir '{directory}' created successfully.")
+	print(f"Directory '{directory}' created successfully.")
 except FileExistsError:
-	print(f"Dir '{directory}' already exists...")
+	print(f"Directory '{directory}' already exists...")
 except OSError as error:
-	print(f"Error creating dir: '{directory}': {str(error)}")
+	print(f"Error creating directory: '{directory}': {str(error)}")
 
 ## Safely download model files *without executing* them.
 ## Best practice is to scan files before opening them 

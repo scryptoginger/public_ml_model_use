@@ -101,5 +101,4 @@ fi
 
 
 # Final Message
-echo "Environment setup complete! Activate your environment with:"
-echo "   `source venv/bin/activate`"
+echo -e "Environment setup complete! Activate your environment with:\n  \`source venv/bin/activate\`"
