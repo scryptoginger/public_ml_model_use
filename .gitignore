@@ -5,3 +5,4 @@ model/
 my_model_package.kit
 .DS_Store
 *.kit
+ignore/
