@@ -4,7 +4,7 @@ import json
 import os
 
 def main():
-	parser = argparse.ArgumentParser(description="Simulate model modification")
+    parser = argparse.ArgumentParser(description="Simulate model modification")
     parser.add_argument(
         "--model-dir",
         default="model",
