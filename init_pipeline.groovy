@@ -3,7 +3,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition
 
 def JOB_NAME = "secure-model-pipeline"
-def GIT_URL = "https://github.com/..."
+def GIT_URL = "https://github.com/scryptoginger/public_ml_model_use.git"
 def GIT_BRANCH = "main"
 
 def jenkins = Jenkins.getInstance()
