@@ -21,28 +21,21 @@ echo "Done..."
 
 
 echo "[3/5] Checking KitOps..."
-mkdir -p tools
+mkdir -p tools tools/tar
 RESPONSE=$(curl -s https://api.github.com/repos/kitops-ml/kitops/releases/latest)
 ASSET_URL=$(printf '%s\n' "$RESPONSE" \
   | grep '"browser_download_url":' \
   | grep 'linux.*tar.gz' \
   | head -n1 \
-  | cut -d '"' -f4)
+  | cut -d '"' -f4 \
+  | tr -d ' \r\n')
 
-ASSET_URL=$(printf '%s' "$ASSET_URL" | tr -d ' \r\n')
-
-if [[ -z "$ASSET_URL" ]]; then
-  echo "Error: could not find KitOps asset URL."
-  exit 1
-fi
-
-# 2. Download, flatten, and extract
+# Download tarball
 curl -fsSL "$ASSET_URL" -o tools/kitops.tar.gz
-
-# Flatten kit binary
-tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "kitops-*/kit"
+# tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools
+tar -xzf tools/kitops.tar.gz -C tools
 chmod +x tools/kit
-rm tools/kitops.tar.gz
+mv tools/kitops.tar.gz tools/tar/
 echo "✔ KitOps CLI available at tools/kit"
 echo "Done..."
 
@@ -65,11 +58,18 @@ else
   exit 1
 fi
 
-$COMPOSE_CMD up -d --build
 
+
+$COMPOSE_CMD up -d --build
+# sleep 5 seconds to let the initial password file finish coming into existence. 
+echo "....." && sleep 1
+echo "...." && sleep 1
+echo "..." && sleep 1
+echo ".." && sleep 1
+echo "." && sleep 1
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
-echo "  Your initialAdminPassword: $(docker exec -it jenkins bash -lc 'cat /var/jenkins_home/secrets/initialAdminPassword')"
+echo "  Your initialAdminPassword: `docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword`"
 echo "  You can get your password again by running this command:"
 echo "    docker exec -it jenkins bash -lc 'cat /var/jenkins_home/secrets/initialAdminPassword'"
