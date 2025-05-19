@@ -2,7 +2,7 @@ pipeline {
 	agent {
 		docker {
 			image 'secure-model-env:latest'
-			args ''
+			args '-i'
 		}
 	}
 
