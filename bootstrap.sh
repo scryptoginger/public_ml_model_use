@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-TOOLS_DIR=tools
-
 echo "[1/5] Checking Docker CLI..."
 if ! command -v docker &>/dev/null; then
   echo "Error: Docker is not installed or not in PATH."
@@ -23,7 +21,7 @@ echo "Done..."
 
 
 echo "[3/5] Checking KitOps..."
-mkdir -p "$TOOLS_DIR" #"$TOOLS_DIR"/kit 
+mkdir -p tools
 RESPONSE=$(curl -s https://api.github.com/repos/kitops-ml/kitops/releases/latest)
 ASSET_URL=$(printf '%s\n' "$RESPONSE" \
   | grep '"browser_download_url":' \
@@ -39,20 +37,14 @@ if [[ -z "$ASSET_URL" ]]; then
 fi
 
 # 2. Download, flatten, and extract
-curl -fsSL "$ASSET_URL" -o "$TOOLS_DIR/kitops.tar.gz"
-# tar -xzf "$TOOLS_DIR/kitops.tar.gz" -C "$TOOLS_DIR"
+curl -fsSL "$ASSET_URL" -o tools/kitops.tar.gz
 
 # Flatten kit binary
-tar -xzf "$TOOLS_DIR/kitops.tar.gz" --strip-components=2 -C "$TOOLS_DIR/kit"
-chmod +x "$TOOLS_DIR/kit"
-rm "$TOOLS_DIR/kitops.tar.gz"
+tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "kitops-*/kit"
+chmod +x tools/kit
+rm tools/kitops.tar.gz
 echo "✔ KitOps CLI available at tools/kit"
 echo "Done..."
-# 3. Move the 'kit' binary to a known path
-# mv "$TOOLS_DIR/kit" "$TOOLS_DIR/kit"
-# chmod +x "$TOOLS_DIR/kit"
-# rm -rf "$TOOLS_DIR"/kitops-* "$TOOLS_DIR/kitops.tar.gz"
-# echo "  KitOps CLI available at $TOOLS_DIR/kit"
 
 
 
@@ -78,6 +70,6 @@ $COMPOSE_CMD up -d --build
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
-echo "  Your initialAdminPassword: `docker exec -it jenkins bash -lc 'cat /var/jenkins_home/secrets/initialAdminPassword'`"
+echo "  Your initialAdminPassword: $(docker exec -it jenkins bash -lc 'cat /var/jenkins_home/secrets/initialAdminPassword')"
 echo "  You can get your password again by running this command:"
 echo "    docker exec -it jenkins bash -lc 'cat /var/jenkins_home/secrets/initialAdminPassword'"
