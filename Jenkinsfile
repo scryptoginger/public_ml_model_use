@@ -2,7 +2,7 @@ pipeline {
 	agent {
 		docker {
 			image 'secure-model-env:latest'
-			args '-v $HOME/.cache:/root/.cache'
+			args ''
 		}
 	}
 
@@ -59,7 +59,9 @@ pipeline {
 	post {
 		always {
 			echo 'Pipeline finished. Check artifacts in the build\'s "Artifacts" section.'
-			junit allowEmptyResults: true, testResults: '$OUTPUT_DIR/*.json'
+			node {
+				junit allowEmptyResults: true, testResults: '$OUTPUT_DIR/*.json'
+			}
 		}
 	}
 }
