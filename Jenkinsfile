@@ -59,9 +59,7 @@ pipeline {
 	post {
 		always {
 			echo 'Pipeline finished. Check artifacts in the build\'s "Artifacts" section.'
-			node {
-				junit allowEmptyResults: true, testResults: '$OUTPUT_DIR/*.json'
-			}
+			junit allowEmptyResults: true, testResults: '$OUTPUT_DIR/*.json'
 		}
 	}
 }
