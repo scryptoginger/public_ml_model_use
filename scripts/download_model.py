@@ -24,6 +24,7 @@ def main():
 		local_dir_use_symlinks=False
 	)
 	print(f"Model '{args.repo_id}' downloaded to '{args.output_dir}'.")
+#  TODO: LS/PRINT OUT THE CONTENTS OF THIS DIR TO VERIFY IT'S ALL THERE AS IT'S SUPPOSED TO BE
 
 if __name__ == "__main__":
 	main()

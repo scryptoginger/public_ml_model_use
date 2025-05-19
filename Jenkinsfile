@@ -9,7 +9,7 @@ pipeline {
 	environment {
 		MODEL_DIR = 'model'
 		OUTPUT_DIR = 'output'
-		POLICY_FILE = 'config/default_scan.yaml'
+		// POLICY_FILE = 'config/default_scan.yaml'
 	}
 
 	stages {
@@ -27,7 +27,7 @@ pipeline {
 
 		stage('Pre-use Scan') {
 			steps {
-				sh "bash scripts/scan.sh $MODEL_DIR $POLICY_FILE --output $OUTPUT_DIR/scan_pre.json"
+				sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_pre.json"
 			}
 		}
 
@@ -39,7 +39,7 @@ pipeline {
 
 		stage('Post-use Scan') {
 			steps {
-				sh "bash scripts/scan.sh $MODEL_DIR $POLICY_FILE --output $OUTPUT_DIR/scan_post.json"
+				sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_post.json"
       		}
 		}
 

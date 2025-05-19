@@ -1,26 +1,23 @@
 #!/usr/bin/env bash
 set -e
 
-if [ "$#" -lt 3 ]; then
+# 1. validate args: expect exactly 3: <model-dir> --output <output-json>
+if [ "$#" -ne 3 ]; then
 	echo "Usage: $0 <model-dir> <policy-file> --output <output-json>"
 	exit 1
 fi
 
+# 2. extract params
 MODEL_DIR=$1
-POLICY_FILE=$2
-
-# parse --output <file>
-shift 2
-if [ "$1" != "--output" ] || [ -z "${2-}" ]; then
+if [ "$2" != "--output" ]; then # || [ -z "${2-}" ]; then
 	echo "Error: expected --output <output-json>"
 	exit 1
 fi
-OUTPUT_JSON=$2
+OUTPUT_JSON=$3
 
 # run modelscan
 modelscan scan \
 	-p "$MODEL_DIR" \
-	--settings-file "$POLICY_FILE" \
 	-r json \
 	-o "$OUTPUT_JSON"
 
