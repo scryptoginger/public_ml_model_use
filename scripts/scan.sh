@@ -21,7 +21,7 @@ OUTPUT_JSON=$2
 modelscan scan \
 	-p "$MODEL_DIR" \
 	--settings-file "$POLICY_FILE" \
-	--r json \
+	-r json \
 	-o "$OUTPUT_JSON"
 
 echo "Scan complete. Report written to '$OUTPUT_JSON'."
