@@ -27,4 +27,4 @@ RUN chmod +x /usr/local/bin/kit
 COPY scripts/ ./scripts/
 
 # Default to Bash so Jenkins can exec shell steps
-ENTRYPOINT ["bash"]
+# ENTRYPOINT ["bash"]
