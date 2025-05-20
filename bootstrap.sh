@@ -62,15 +62,22 @@ export TIMESTAMP=$(date +%s)
 echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
-# sleep 5 seconds to let the initial password file finish coming into existence. 
+# sleep 10 seconds to let the initial password file finish coming into existence. 
+echo ".........." && sleep 1
+echo "........." && sleep 1
+echo "........" && sleep 1
+echo "......." && sleep 1
+echo "......" && sleep 1
 echo "....." && sleep 1
 echo "...." && sleep 1
 echo "..." && sleep 1
 echo ".." && sleep 1
 echo "." && sleep 1
+IAP=$(cat /var/jenkins_home/secrets/initialAdminPassword 2>/dev/null \
+    || cat /jenkins_home/secrets/initialAdminPassword 2>/dev/null)
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
-echo "  Your initialAdminPassword: `docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword`"
+echo "  Your initialAdminPassword: $(IAP)"
 echo "  You can get your password again by running this command:"
-echo "    docker exec -it jenkins bash -lc 'cat /var/jenkins_home/secrets/initialAdminPassword'"
+echo "    'cat /jenkins_home/secrets/initialAdminPassword'"
