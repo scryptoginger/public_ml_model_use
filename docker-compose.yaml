@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: jenkins
+    container_name: "jenkins_${TIMESTAMP}"
     user: root
     restart: unless-stopped
     ports:

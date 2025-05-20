@@ -58,7 +58,8 @@ else
   exit 1
 fi
 
-
+export TIMESTAMP=$(date +%s)
+echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
 # sleep 5 seconds to let the initial password file finish coming into existence. 
