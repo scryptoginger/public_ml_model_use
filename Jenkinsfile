@@ -57,12 +57,9 @@ pipeline {
 
 		stage('Archive Artifacts') {
 			steps {
+				sh 'ls -l "${OUTPUT_DIR}"'
 				archiveArtifacts \
-					artifacts: [
-						"$OUTPUT_DIR/*.json",
-						"$OUTPUT_DIR/*.zip", 
-						"$OUTPUT_DIR/*.kit"
-					], \
+					artifacts: "$OUTPUT_DIR/*.json, $OUTPUT_DIR/*.zip, $OUTPUT_DIR/*.kit",
 					fingerprint: true
       		}
 		}
@@ -71,7 +68,6 @@ pipeline {
 	post {
 		always {
 			echo "Pipeline finished. Check artifacts in the build\'s 'Artifacts' section."
-			junit allowEmptyResults: true, testResults: "$OUTPUT_DIR/*.json"
 		}
 	}
 }
