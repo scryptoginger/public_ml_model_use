@@ -3,22 +3,14 @@ set -euo pipefail
 
 echo "[1/5] Checking Docker CLI..."
 if ! command -v docker &>/dev/null; then
-    echo "ERROR: Docker CLI not found. Please install Docker (Docker Desktop on macOS/Windows) and rerun."
-    echo "For Linux, we'll install via package manager now." >&2
-else
-    echo "Docker already installed. Continuing..."
-fi
-
-if command -v docker &>/dev/null; then
-    echo "Docker CLI found."
-else
+    # Docker CLI missing → try auto-install on Linux, else prompt Mac/Win
     OS="$(uname -s)"
     case "$OS" in
         Linux)
-            echo "Docker not found on Linux - installing via package manager..."
+            echo "→ Docker CLI not found on Linux—installing via package manager..."
             if command -v apt &>/dev/null; then
                 sudo apt update
-                sudo apt-get install -y docker.io docker-compose-plugin
+                sudo apt install -y docker.io docker-compose-plugin
             elif command -v dnf &>/dev/null; then
                 sudo dnf install -y docker docker-compose-plugin
             else
@@ -27,13 +19,13 @@ else
             fi
             ;;
         Darwin)
-            echo "ERROR: Docker not installed. Please install Docker Desktop for Mac:" \
-            "https://www.docker.com/products/docker-desktop" >&2
+            echo "ERROR: Docker CLI not found. Please install Docker Desktop for macOS:" \
+                 "https://www.docker.com/products/docker-desktop" >&2
             exit 1
             ;;
         MINGW*|CYGWIN*|MSYS*|Windows_NT)
-            echo "ERROR: Docker not installed. Please install Docker Desktop for Windows:" \
-            "https://www.docker.com/products/docker-desktop" >&2
+            echo "ERROR: Docker CLI not found. Please install Docker Desktop for Windows:" \
+                 "https://www.docker.com/products/docker-desktop" >&2
             exit 1
             ;;
         *)
@@ -41,31 +33,36 @@ else
             exit 1
             ;;
     esac
-echo "Done..."
+else
+    echo "✔ Docker CLI already installed."
+fi
+echo "Done."
 
 
 
 echo "[2/5] Verifying Docker daemon..."
 if docker info &>/dev/null; then
-    echo "Docker is running"
+    echo "✔ Docker daemon is running."
 else
-    #check if you're on a system with 'systemd' and try to start it
+    # only attempt systemctl on Linux hosts
     if command -v systemctl &>/dev/null; then
-        echo "Docker not running -- attempting to start via systemctl..."
+        echo "→ Docker daemon not running—attempting to start via systemctl..."
         sudo systemctl start docker
         sudo systemctl enable docker
 
+        # re-check
         if docker info &>/dev/null; then
-            echo "Docker started successfully."
+            echo "✔ Docker service started successfully."
         else
-            echo "Docker still is not responding after systemctlstart." >&2
+            echo "ERROR: Docker service still not responding after systemctl start." >&2
             exit 1
         fi
-else
-    echo "ERROR: Docker daemon is not running. Please start Docker Desktop (macOS/Windows) or run 'sudo systemctl start docker' (Linux) and rerun bootstrap." >&2
-    exit 1
+    else
+        echo "ERROR: Docker daemon is not running. Start Docker Desktop (macOS/Windows) or run 'sudo systemctl start docker' (Linux) and rerun bootstrap." >&2
+        exit 1
+    fi
 fi
-echo "Done..."
+echo "Done."
 
 
 
