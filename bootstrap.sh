@@ -63,7 +63,7 @@ echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
 
-docker exec -u root jenkins chmod a+r /jenkins_home/secrets/initialAdminPassword
+$COMPOSE_CMD exec -u root jenkins chmod a+r /var/jenkins_home/secrets/initialAdminPassword
 
 echo "Charging the Flux Capacitor to 1.21gw..."
 sleep 3
