@@ -3,16 +3,8 @@ set -euo pipefail
 
 echo "[1/5] Checking Docker CLI..."
 if ! command -v docker &>/dev/null; then
-    echo "Docker is not installed. Installing via apt..."
-    if command -v apt &>/dev/null; then
-        sudo apt update
-        sudo apt install -y docker.io docker-compose-plugin
-    elif command -v dnf &>/dev/null; then
-        sudo dnf install -y docker docker-compose-plugin
-    else
-        echo "ERROR: Unsupported package manager. Install Docker manually, then rerun bootstrap.sh"
-        exit 1
-    fi
+    echo "ERROR: Docker CLI not found. Please install Docker (Docker Desktop on macOS/Windows, docker.io on Linux) and rerun." >&2
+    exit 1
 else
     echo "Docker already installed. Continuing..."
 fi
@@ -21,12 +13,24 @@ echo "Done..."
 
 
 echo "[2/5] Verifying Docker daemon..."
-if ! systemctl is-active --quiet docker; then
-    echo "Starting Docker service..."
-    sudo systemctl start docker
-    sudo systemctl enable docker
+if docker info &>/dev/null; then
+    echo "Docker is running"
 else
-    echo "Docker service is already active."
+    #check if you're on a system with 'systemd' and try to start it
+    if command -v systemctl &>/dev/null; then
+        echo "Docker not running -- attempting to start via systemctl..."
+        sudo systemctl start docker
+        sudo systemctl enable docker
+
+        if docker info &>/dev/null; then
+            echo "Docker started successfully."
+        else
+            echo "Docker still is not responding after systemctlstart." >&2
+            exit 1
+        fi
+else
+    echo "ERROR: Docker daemon is not running. Please start Docker Desktop (macOS/Windows) or run 'sudo systemctl start docker' (Linux) and rerun bootstrap." >&2
+    exit 1
 fi
 echo "Done..."
 
