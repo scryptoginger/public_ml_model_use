@@ -10,7 +10,15 @@ if ! command -v docker &>/dev/null; then
             echo "→ Docker CLI not found on Linux—installing via package manager..."
             if command -v apt &>/dev/null; then
                 sudo apt update
-                sudo apt install -y docker.io docker-compose-plugin
+                sudo apt install -y docker.io 
+
+                if apt-cache show docker-compose-plugin &>/dev/null; then
+                sudo apt install -y docker-compose-plugin
+                else
+                    echo "Installing 'docker-compose'"
+                    sudo apt install -y docker-compose
+                fi
+
             elif command -v dnf &>/dev/null; then
                 sudo dnf install -y docker docker-compose-plugin
             else
