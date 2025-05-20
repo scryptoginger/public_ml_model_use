@@ -62,22 +62,19 @@ export TIMESTAMP=$(date +%s)
 echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
-# sleep 10 seconds to let the initial password file finish coming into existence. 
-echo ".........." && sleep 1
-echo "........." && sleep 1
-echo "........" && sleep 1
-echo "......." && sleep 1
-echo "......" && sleep 1
-echo "....." && sleep 1
-echo "...." && sleep 1
-echo "..." && sleep 1
-echo ".." && sleep 1
-echo "." && sleep 1
-IAP=$(cat /var/jenkins_home/secrets/initialAdminPassword 2>/dev/null \
-    || cat /jenkins_home/secrets/initialAdminPassword 2>/dev/null)
+echo "Waiting for Jenkins to initialize..."
+sleep 10
+
+if [[ -r /var/jenkins_home/secrets/initialAdminPassword ]]; then
+    IAP=$(< /var/jenkins_home/secrets/initialAdminPassword)
+elif [[ -r /jenkins_home/secrets/initialAdminPassword ]]; then
+    IAP=$(< /jenkins_home/secrets/initialAdminPassword)
+else
+    IAP="(unable to locate initialAdminPassword -- try deleting this repo and starting over)"
+fi
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
-echo "  Your initialAdminPassword: $(IAP)"
+echo "  Your initialAdminPassword: $IAP"
 echo "  You can get your password again by running this command:"
 echo "    'cat /jenkins_home/secrets/initialAdminPassword'"
