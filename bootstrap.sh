@@ -63,17 +63,13 @@ echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
 
-$COMPOSE_CMD exec -u root jenkins chmod a+r /var/jenkins_home/secrets/initialAdminPassword
+IAP=$($COMPOSE_CMD exec -T jenkins cat /var/jenkins_home/secrets/initialAdminPassword)
+# $COMPOSE_CMD exec -u root jenkins chmod a+r ./jenkins_home/secrets/initialAdminPassword
 
 echo "Charging the Flux Capacitor to 1.21gw..."
 sleep 3
 echo "(actually, we're just waiting for Jenkins to initialize...)"
 sleep 7
-
-IAP=$(
-    cat ./jenkins_home/secrets/initialAdminPassword || \
-    cat /jenkins_home/secrets/initialAdminPassword
-)
 
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
@@ -81,5 +77,6 @@ echo ""
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
 echo -e "  Your initialAdminPassword: >>>> \033[1;33m  $IAP \033[0m <<<<"
 echo ""
+echo "  You should copy/save this password locally for easy reference."
 echo "  You can get your password again by running this command:"
-echo "    'cat ./jenkins_home/secrets/initialAdminPassword'"
+echo "    'sudo cat ./jenkins_home/secrets/initialAdminPassword'"
