@@ -3,19 +3,31 @@ set -euo pipefail
 
 echo "[1/5] Checking Docker CLI..."
 if ! command -v docker &>/dev/null; then
-  echo "Error: Docker is not installed or not in PATH."
-  exit 1
+    echo "Docker is not installed. Installing via apt..."
+    if command -v apt &>/dev/null; then
+        sudo apt update
+        sudo apt install -y docker.io docker-compose-plugin
+    elif command -v dnf &>/dev/null; then
+        sudo dnf install -y docker docker-compose-plugin
+    else
+        echo "ERROR: Unsupported package manager. Install Docker manually, then rerun bootstrap.sh"
+        exit 1
+    fi
+else
+    echo "Docker already installed. Continuing..."
 fi
 echo "Done..."
 
 
 
 echo "[2/5] Verifying Docker daemon..."
-if ! docker info &>/dev/null; then
-  echo "Error: Docker daemon is not running. Please start Docker."
-  exit 1
+if ! systemctl is-active --quiet docker; then
+    echo "Starting Docker service..."
+    sudo systemctl start docker
+    sudo systemctl enable docker
+else
+    echo "Docker service is already active."
 fi
-echo "✔ Docker is available and running."
 echo "Done..."
 
 
@@ -63,14 +75,15 @@ echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
 
-IAP=$($COMPOSE_CMD exec -T jenkins cat /var/jenkins_home/secrets/initialAdminPassword)
-# $COMPOSE_CMD exec -u root jenkins chmod a+r ./jenkins_home/secrets/initialAdminPassword
-
 echo "Charging the Flux Capacitor to 1.21gw..."
 sleep 3
 echo "(actually, we're just waiting for Jenkins to initialize...)"
 sleep 7
 
+IAP=$(
+    $COMPOSE_CMD exec -T jenkins cat /var/jenkins_home/secrets/initialAdminPassword \
+   || $COMPOSE_CMD exec -T jenkins cat ./jenkins_home/secrets/initialAdminPassword
+)
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo ""
