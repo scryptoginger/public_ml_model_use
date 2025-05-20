@@ -3,11 +3,44 @@ set -euo pipefail
 
 echo "[1/5] Checking Docker CLI..."
 if ! command -v docker &>/dev/null; then
-    echo "ERROR: Docker CLI not found. Please install Docker (Docker Desktop on macOS/Windows, docker.io on Linux) and rerun." >&2
-    exit 1
+    echo "ERROR: Docker CLI not found. Please install Docker (Docker Desktop on macOS/Windows) and rerun."
+    echo "For Linux, we'll install via package manager now." >&2
 else
     echo "Docker already installed. Continuing..."
 fi
+
+if command -v docker &>/dev/null; then
+    echo "Docker CLI found."
+else
+    OS="$(uname -s)"
+    case "$OS" in
+        Linux)
+            echo "Docker not found on Linux - installing via package manager..."
+            if command -v apt &>/dev/null; then
+                sudo apt update
+                sudo apt-get install -y docker.io docker-compose-plugin
+            elif command -v dnf &>/dev/null; then
+                sudo dnf install -y docker docker-compose-plugin
+            else
+                echo "ERROR: Unsupported Linux distro. Install Docker manually and rerun." >&2
+                exit 1
+            fi
+            ;;
+        Darwin)
+            echo "ERROR: Docker not installed. Please install Docker Desktop for Mac:" \
+            "https://www.docker.com/products/docker-desktop" >&2
+            exit 1
+            ;;
+        MINGW*|CYGWIN*|MSYS*|Windows_NT)
+            echo "ERROR: Docker not installed. Please install Docker Desktop for Windows:" \
+            "https://www.docker.com/products/docker-desktop" >&2
+            exit 1
+            ;;
+        *)
+            echo "ERROR: Unrecognized OS ($OS). Please install Docker manually." >&2
+            exit 1
+            ;;
+    esac
 echo "Done..."
 
 
