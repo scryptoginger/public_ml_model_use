@@ -57,17 +57,40 @@ else
         echo "→ Docker daemon not running—attempting to start via systemctl..."
         sudo systemctl start docker
         sudo systemctl enable docker
+        sleep 5
 
         # re-check
         if docker info &>/dev/null; then
+        
             echo "✔ Docker service started successfully."
         else
             echo "ERROR: Docker service still not responding after systemctl start." >&2
+            echo "On linux distro, run 'sudo systemctl start docker' and rerun this bootstrap script."
             exit 1
         fi
     else
         echo "ERROR: Docker daemon is not running. Start Docker Desktop (macOS/Windows) or run 'sudo systemctl start docker' (Linux) and rerun bootstrap." >&2
         exit 1
+    fi
+
+    if docker info &>/dev/null; then
+        echo "✔ Docker daemon is now running and accessible."
+    else
+        echo "⚠️ Docker daemon is running, but your user can’t access it (socket permission)."
+        # Add you to the docker group if not already
+        if ! groups "$USER" | grep -qw docker; then
+          echo "→ Adding '$USER' to the docker group so you can run without sudo."
+          sudo usermod -aG docker "$USER"
+          echo "   Please log out and back in (or run 'newgrp docker') to apply the new group membership."
+        fi
+
+        # Final check via sudo
+        if sudo docker info &>/dev/null; then
+            echo "✔ Docker daemon is reachable via sudo. Once your group membership is applied, you’ll be able to run it unprivileged."
+        else
+            echo "ERROR: Even sudo can’t reach the daemon. Something’s wrong with your Docker install." >&2
+            exit 1
+        fi
     fi
 fi
 echo "Done."
