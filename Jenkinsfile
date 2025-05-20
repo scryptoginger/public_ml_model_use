@@ -9,15 +9,11 @@ pipeline {
 	environment {
 		MODEL_DIR = "model"
 		OUTPUT_DIR = "output"
-		// POLICY_FILE = "config/default_scan.yaml"
 	}
 
 	stages {
 		stage('Prepare Workspace') {
 			steps {
-				echo "\n\n\n\n\n"
-				sh "pwd"
-				sh "mkdir -p TESTESTSETSETSET"
 				sh "mkdir -p $MODEL_DIR $OUTPUT_DIR"
 				echo "Done! Next stage..."
 			}
@@ -67,16 +63,15 @@ pipeline {
       		}
 		}
 
-		// stage('Export Results') {
-		// 	steps {
-		// 		sh 'mkdir ls -l "${OUTPUT_DIR}"'
-		// 		echo "\n\n"
-		// 		echo "You can find the results of this Jenkins job in the new directory 'job_results'."
-		// 		archiveArtifacts \
-		// 			artifacts: "$OUTPUT_DIR/*.json, $OUTPUT_DIR/*.zip, $OUTPUT_DIR/*.kit",
-		// 			fingerprint: true
-      	// 	}
-		// }
+		stage('Export Job Results') {
+			steps {
+				sh '''
+					mkdir -p /workspace/job_results
+					cp -r "$OUTPUT_DIR"/* /workspace/job_results/
+				'''
+				echo "Jenkins job results can be found in the new folder 'job_results'"
+      		}
+		}
 	}
 
 	post {
