@@ -62,18 +62,19 @@ export TIMESTAMP=$(date +%s)
 echo "Using Jenkins 'container_name': jenkins_${TIMESTAMP}"
 
 $COMPOSE_CMD up -d --build
+
+docker exec -u root jenkins chmod a+r /jenkins_home/secrets/initialAdminPassword
+
 echo "Charging the Flux Capacitor to 1.21gw..."
 sleep 3
 echo "(actually, we're just waiting for Jenkins to initialize...)"
 sleep 7
 
-if [[ -r /var/jenkins_home/secrets/initialAdminPassword ]]; then
-    IAP=$(< /var/jenkins_home/secrets/initialAdminPassword)
-elif [[ -r ./jenkins_home/secrets/initialAdminPassword ]]; then
-    IAP=$(< ./jenkins_home/secrets/initialAdminPassword)
-else
-    IAP="(unable to locate initialAdminPassword -- try deleting this repo and starting over)"
-fi
+IAP=$(
+    cat ./jenkins_home/secrets/initialAdminPassword || \
+    cat /jenkins_home/secrets/initialAdminPassword
+)
+
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo ""
