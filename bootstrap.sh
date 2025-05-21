@@ -39,29 +39,41 @@ echo "Done."
 
 echo "[3/5] Checking KitOps..."
 mkdir -p tools tools/tar
-RESPONSE=$(curl -s https://api.github.com/repos/kitops-ml/kitops/releases/latest)
+
+RESPONSE=$(curl -fsSL https://api.github.com/repos/kitops-ml/kitops/releases/latest)
+
+case "$(uname -s)" in
+  Linux)  FILTER='linux.*tar.gz'  ;;
+  Darwin) FILTER='darwin.*tar.gz' ;;
+  *)      FILTER='tar.gz'          ;;
+esac
+
 ASSET_URL=$(printf '%s\n' "$RESPONSE" \
-  | grep '"browser_download_url":' \
-  | grep 'linux.*tar.gz' \
+  | grep -oE '"browser_download_url":\s*"([^"]+)"' \
+  | grep -E "$FILTER" \
   | head -n1 \
-  | cut -d '"' -f4 \
-  | tr -d ' \r\n')
+  | sed -E 's/.*"([^"]+)".*/\1/')
 
 if [[ -z "$ASSET_URL" ]]; then
-    echo "ERROR: Could not find KitOps download URL." >&2
+    echo "ERROR: Could not find KitOps download URL."
+    echo "Here's the first 50 lines from raw JSON:"
+    echo "$RESPONSE" | head -50
     exit 1
 fi
 
 # Download tarball
 curl -fsSL "$ASSET_URL" -o tools/kitops.tar.gz
+
 ENTRY="$(tar -tzf tools/kitops.tar.gz | grep -E '(^|/)(kit|kitops)$' | head -n1)"
 if [[ -z "$ENTRY" ]]; then
-    echo "ERROR: 'kit' binary not found inside the KitOps tarball." >&2
+    echo "ERROR: 'kit' binary not found inside the KitOps tarball. Contents:"
+    tar -tzf tools/kitops.tar.gz
     exit 1
 fi
 
-DIRLEVEL="$(grep -o "/" <<< "$ENTRY" | wc -l)"
-tar -xzf tools/kitops.tar.gz --strip-components="$DIRLEVEL" -C tools "$ENTRY"
+
+STRIP=$(awk -F"/" '{print NF-1; exit}' <<<"ENTRY")
+tar -xzf tools/kitops.tar.gz --strip-components="$STRIP" -C tools "$ENTRY"
 chmod +x tools/kit
 mv tools/kitops.tar.gz tools/tar/
 echo "✔ KitOps CLI available at tools/kit"
