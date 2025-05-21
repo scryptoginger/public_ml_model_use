@@ -129,10 +129,27 @@ sleep 3
 echo "(actually, we're just waiting for Jenkins to initialize...)"
 sleep 7
 
-IAP=$(
-    $COMPOSE_CMD exec -T jenkins cat /var/jenkins_home/secrets/initialAdminPassword \
-   || $COMPOSE_CMD exec -T jenkins cat ./jenkins_home/secrets/initialAdminPassword
-)
+echo "  Sending our Labrador Retriever to fetch the 'secret' Jenkins Initial Admin Password..."
+if IAP=$(
+    $COMPOSE_CMD exec -T jenkins cat /var/jenkins_home/secrets/initialAdminPassword 2>/dev/null); then
+    exit 0
+elif IAP=$(
+    $COMPOSE_CMD exec -T jenkins cat /var/jenkins_home/secrets/initialAdminPassword 2>/dev/null); then
+    exit 0
+else
+    echo 
+    echo "  Permission is denied to access the password file within Jenkins' secrets folder."
+    echo "  We need SUDO privileges to read './jenkins_home/secrets/initialAdminPassword'."
+    echo "  You may be prompted to enter your password now..."
+    IAP=$(sudo cat ./jenkins_home/secrets/initialAdminPassword)
+fi
+
+# At this point $IAP holds the password (or is empty if all attempts failed)
+if [[ -z "$IAP" ]]; then
+  echo "ERROR: Could not retrieve the Jenkins initialAdminPassword from any location." >&2
+  exit 1
+fi
+
 echo
 echo "✔ Jenkins is starting at http://localhost:8080"
 echo ""
