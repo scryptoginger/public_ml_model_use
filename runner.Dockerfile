@@ -26,5 +26,8 @@ RUN chmod +x /usr/local/bin/kit
 # Copy pipeline scripts into the image
 COPY scripts/ ./scripts/
 
-# Default to Bash so Jenkins can exec shell steps
-# ENTRYPOINT ["bash"]
+# Install distutils
+RUN apt-get update && apt-get install -y python3-distutils && \
+	rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip setuptools kitops modelscan

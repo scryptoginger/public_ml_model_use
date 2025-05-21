@@ -103,7 +103,11 @@ echo "Done..."
 
 
 echo "[4/5] Building pipeline runner image…"
-docker build -t secure-model-env:latest -f runner.Dockerfile .
+
+export DOCKER_BUILDKIT=1
+docker builder prune --all --force || true
+docker image prune --all --force || true
+docker build --no-cache -t secure-model-env:latest -f runner.Dockerfile .
 echo "Done..."
 
 
