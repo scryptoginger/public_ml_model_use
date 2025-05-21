@@ -108,6 +108,19 @@ export DOCKER_BUILDKIT=1
 docker builder prune --all --force || true
 docker image prune --all --force || true
 docker build --no-cache -t secure-model-env:latest -f runner.Dockerfile .
+
+if [[ "$OS" == "Linux" ]]; then
+    if ! docker buildx version &>/dev/null; then
+        if command -v apt &>/dev/null; then
+            sudo apt update
+            sudo apt install -y docker-buildx-plugin
+        elif command -v dnf &>/dev/null; then
+            sudo dnf install -y docker-buildx-plugin
+        else
+            echo "Unable to auto-install BuildX on this Linux machine. BuildX may fail."
+        fi
+    fi
+fi
 echo "Done..."
 
 
