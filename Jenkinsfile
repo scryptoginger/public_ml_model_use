@@ -49,7 +49,7 @@ pipeline {
 
 		stage('[6/8] Package Model') {
 			steps {
-				sh "python3 scripts/package_model.py --model-dir $MODEL_DIR --output-dir $OUTPUT_DIR"
+				sh "bash scripts/package_model.sh $MODEL_DIR $OUTPUT_DIR"
 				echo "Done! Next stage...(archive the artifacts)"
 			}
 		}
