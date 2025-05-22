@@ -8,7 +8,7 @@ fi
 
 MODEL_DIR=$1
 OUTPUT_DIR=$2
-TOOLS_DIR="$(dirname "$0")/../tools"
+TOOLS_DIR="$(dirname "$0")../tools"
 KIT="$TOOLS_DIR/kit"
 
 mkdir -p "$OUTPUT_DIR"

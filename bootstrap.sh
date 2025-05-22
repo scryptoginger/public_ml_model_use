@@ -132,7 +132,7 @@ else
 fi
 
 echo
-echo "✔ Jenkins is starting at http://localhost:8080"
+echo "✔ Jenkins is starting at http://localhost:$JENKINS_HTTP_PORT"
 echo "=============================================================="
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
 
