@@ -8,19 +8,17 @@ fi
 
 MODEL_DIR=$1
 OUTPUT_DIR=$2
-TOOLS_DIR="$(dirname "$0")/../tools"
-KIT="$TOOLS_DIR/kit"
 
 mkdir -p "$OUTPUT_DIR"
 
-if [[ ! -x "$KIT" ]]; then
-	echo "ERROR: KitOps CLI not found at $KIT" >&2
+if ! command -v kit &>/dev/null; then
+	echo "ERROR: KitOps CLI not found on PATH >&2
 	exit 1
 fi
 
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
-"$KIT" pack \
+kit pack \
 	--source "$MODEL_DIR" \
 	--output "$OUTFILE" \
 	|| { echo "KitOps pack failed"; exit 1; }
