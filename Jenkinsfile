@@ -13,54 +13,34 @@ pipeline {
 
 	stages {
 		stage('[1/8] Prepare Workspace') {
-			steps {
-				sh "mkdir -p $MODEL_DIR $OUTPUT_DIR"
-				echo "Done! Next stage...(download the model)"
-			}
+			steps { sh "mkdir -p $MODEL_DIR $OUTPUT_DIR" }
 		}
 
 		stage('[2/8] Download Model') {
-			steps {
-				sh "python3 scripts/download_model.py --output-dir $MODEL_DIR"
-				echo "Done! Next stage...(pre-use modelscan)"
-			}
+			steps { sh "python3 scripts/download_model.py --output-dir $MODEL_DIR" }
 		}
 
 		stage('[3/8] Pre-use Scan') {
-			steps {
-				sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_pre.json"
-				echo "Done! Next stage...(mock modifying model)"
-			}
+			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_pre.json" }
 		}
 
 		stage('[4/8] Modify Model') {
-			steps {
-				sh "python3 scripts/modify_model.py --model-dir $MODEL_DIR"
-				echo "Done! Next stage...(post-use modelscan)"
-			}
+			steps { sh "python3 scripts/modify_model.py --model-dir $MODEL_DIR" }
 		}
 
 		stage('[5/8] Post-use Scan') {
-			steps {
-				sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_post.json"
-				echo "Done! Next stage...(package your 'new' model)"
-      		}
+			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_post.json" }
 		}
 
 		stage('[6/8] Package Model') {
-			steps {
-				sh "bash scripts/package_model.sh $MODEL_DIR $OUTPUT_DIR"
-				echo "Done! Next stage...(archive the artifacts)"
-			}
+			steps { sh "bash scripts/package_model.sh model output" }
 		}
 
 		stage('[7/8] Archive Artifacts') {
 			steps {
 				sh 'ls -l "${OUTPUT_DIR}"'
-				archiveArtifacts \
-					artifacts: "$OUTPUT_DIR/*.json, $OUTPUT_DIR/*.zip, $OUTPUT_DIR/*.kit",
+				archiveArtifacts artifacts: "$OUTPUT_DIR/*.json, $OUTPUT_DIR/*.zip, $OUTPUT_DIR/*.kit",
 					fingerprint: true
-				echo "Done! Next stage...(copy job results to repo root dir)"
       		}
 		}
 

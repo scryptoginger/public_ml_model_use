@@ -40,32 +40,13 @@ echo "Done."
 echo "[3/5] Checking KitOps..."
 mkdir -p tools tools/tar
 
-# detect local architecture
-ARCH=$(uname -m)
-case "$ARCH" in
-  x86_64) GOARCH="amd64" ;;
-  aarch64|arm64) GOARCH="arm64" ;;
-  *) 
-    echo "ERROR: unsupported arch $ARCH"; 
-    exit 1 
-    ;;
-esac
-
 # fetch latest kitops release metadata
-RESPONSE=$(curl -fsSL https://api.github.com/repos/kitops-ml/kitops/releases/latest)
-
-# case "$(uname -s)" in
-#   Linux)  FILTER='linux.*tar.gz'  ;;
-#   Darwin) FILTER='darwin.*tar.gz' ;;
-#   *)      FILTER='tar.gz'          ;;
-# esac
-
-ASSET_URL=$(printf '%s\n' "$RESPONSE" \
+ASSET_URL=$(curl -fsSL https://api.github.com/repos/kitops-ml/kitops/releases/latest \
   | grep '"browser_download_url":' \
-  | grep -E "linux-${GOARCH}.*\.tar\.gz" \
+  | grep "linux-amd64.*\.tar\.gz" \
   | head -n1 \
   | cut -d '"' -f4)
-  # | sed -E 's/.*"([^"]+)".*/\1/')
+
 
 if [[ -z "$ASSET_URL" ]]; then
     echo "ERROR: Could not find KitOps download URL."
@@ -84,9 +65,9 @@ if [[ -z "$ENTRY" ]]; then
 fi
 
 
-# DIRLEVEL=$(grep -o "/" <<< "$ENTRY" | wc -l)
-tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "$ENTRY"
-chmod +x tools/kit
+DIRLEVEL=$(grep -o "/" <<< "$ENTRY" | wc -l)
+tar -xzf tools/kitops.tar.gz --strip-components="$DIRLEVEL" -C tools "$ENTRY"
+# tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "$ENTRY"
 mv tools/"$(basename "$ENTRY")" tools/kit
 chmod +x tools/kit
 mv tools/kitops.tar.gz tools/tar/
