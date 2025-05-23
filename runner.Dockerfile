@@ -1,5 +1,5 @@
 # Use a slim Python base to minimize image size
-FROM --platform=linux/amd64 python:3.11-slim
+FROM python:3.11-slim
 
 # Install OS packages req'd by ModelScan and huggingface_hub
 ENV DEBIAN_FRONTEND=noninteractive

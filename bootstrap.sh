@@ -41,12 +41,18 @@ echo "[3/5] Checking KitOps..."
 mkdir -p tools tools/tar
 
 # fetch latest kitops release metadata
+ARCH=$(uname -m)
+case "$ARCH" in
+  arm64|aarch64) FILTER='linux-arm64.*\.tar\.gz' ;;
+  x86_64|amd64) FILTER='linux-x86_64.*\.tar\.gz' ;;
+  *) echo "ERROR: unsupported arch $ARCH"; exit 1 ;;
+esac
+
 ASSET_URL=$(curl -fsSL https://api.github.com/repos/kitops-ml/kitops/releases/latest \
   | grep '"browser_download_url":' \
-  | grep "linux-amd64.*\.tar\.gz" \
+  | grep -E "$FILTER" \
   | head -n1 \
   | cut -d '"' -f4)
-
 
 if [[ -z "$ASSET_URL" ]]; then
     echo "ERROR: Could not find KitOps download URL."
@@ -65,7 +71,7 @@ if [[ -z "$ENTRY" ]]; then
 fi
 
 
-DIRLEVEL=$(grep -o "/" <<< "$ENTRY" | wc -l)
+DIRLEVEL=$(echo "$ENTRY" | awk -F'/' '{print NF-1}')
 tar -xzf tools/kitops.tar.gz --strip-components="$DIRLEVEL" -C tools "$ENTRY"
 # tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "$ENTRY"
 mv tools/"$(basename "$ENTRY")" tools/kit
@@ -78,7 +84,12 @@ echo "Done..."
 
 
 echo "[4/5] Building pipeline runner image…"
-docker build -t secure-model-env:latest -f runner.Dockerfile .
+docker buildx build \
+    --platform linux/amd64 \
+    --load \
+    -t secure-model-env:latest \
+    -f runner.Dockerfile \
+    .
 echo "Runner image built."
 echo "Done..."
 
