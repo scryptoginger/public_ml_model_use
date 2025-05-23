@@ -45,7 +45,10 @@ ARCH=$(uname -m)
 case "$ARCH" in
   x86_64) GOARCH="amd64" ;;
   aarch64|arm64) GOARCH="arm64" ;;
-  *) echo "ERROR: unsupported arch $ARCH"; exit 1 ;;
+  *) 
+    echo "ERROR: unsupported arch $ARCH"; 
+    exit 1 
+    ;;
 esac
 
 # fetch latest kitops release metadata
@@ -59,7 +62,7 @@ RESPONSE=$(curl -fsSL https://api.github.com/repos/kitops-ml/kitops/releases/lat
 
 ASSET_URL=$(printf '%s\n' "$RESPONSE" \
   | grep '"browser_download_url":' \
-  | grep -E "linux-$GOARCH.*\.tar\.gz" \
+  | grep -E "linux-${GOARCH}.*\.tar\.gz" \
   | head -n1 \
   | cut -d '"' -f4)
   # | sed -E 's/.*"([^"]+)".*/\1/')
@@ -87,6 +90,7 @@ chmod +x tools/kit
 mv tools/"$(basename "$ENTRY")" tools/kit
 chmod +x tools/kit
 my tools/kitops.tar.gz tools/tar/
+
 echo "✔ KitOps CLI available at tools/kit"
 echo "Done..."
 
