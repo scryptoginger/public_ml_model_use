@@ -12,7 +12,7 @@ OUTPUT_DIR=$2
 mkdir -p "$OUTPUT_DIR"
 
 if ! command -v kit &>/dev/null; then
-	echo "ERROR: KitOps CLI not found on PATH >&2
+	echo "ERROR: KitOps CLI not found on PATH" >&2
 	exit 1
 fi
 
