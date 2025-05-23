@@ -89,7 +89,7 @@ tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "$ENTRY"
 chmod +x tools/kit
 mv tools/"$(basename "$ENTRY")" tools/kit
 chmod +x tools/kit
-my tools/kitops.tar.gz tools/tar/
+mv tools/kitops.tar.gz tools/tar/
 
 echo "✔ KitOps CLI available at tools/kit"
 echo "Done..."
