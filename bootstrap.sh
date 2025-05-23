@@ -89,6 +89,20 @@ echo "Done..."
 
 
 echo "[5/5] Launching Jenkins via Docker Compose…"
+# detect open port
+for p in {8080..8100}; do
+    if ! lsof -Pi :$p -sTCP:LISTEN -t >/dev/null; then
+        export JENKINS_HTTP_PORT=$p
+        break
+    fi
+done
+
+if [[ -z "${JENKINS_HTTP_PORT-}" ]]; then
+    echo "ERROR: couldn't find a free port in 8080-8100 range. Please free one or set JENKINS_HTTP_PORT manually."
+    exit 1
+fi
+echo "  Open port found: binding host port $JENKINS_HTTP_PORT to container 8080."
+
 # detect whether to use `docker-compose` or `docker compose`
 if command -v docker-compose &>/dev/null; then
   COMPOSE_CMD="docker-compose"
@@ -118,7 +132,7 @@ else
 fi
 
 echo
-echo "✔ Jenkins is starting at http://localhost:8080"
+echo "✔ Jenkins is starting at http://localhost:$JENKINS_HTTP_PORT"
 echo "=============================================================="
 echo "  To unlock Jenkins, you need the initialAdminPassword." 
 
