@@ -21,7 +21,7 @@ pipeline {
 		}
 
 		stage('[3/8] Pre-use Scan') {
-			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_pre.json" }
+			steps { sh "bash scripts/scan.sh $MODEL_DIR -o $OUTPUT_DIR/scan_pre.json" }
 		}
 
 		stage('[4/8] Modify Model') {
@@ -29,7 +29,7 @@ pipeline {
 		}
 
 		stage('[5/8] Post-use Scan') {
-			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_post.json" }
+			steps { sh "bash scripts/scan.sh $MODEL_DIR -o $OUTPUT_DIR/scan_post.json" }
 		}
 
 		stage('[6/8] Package Model') {
