@@ -23,7 +23,7 @@ pipeline {
 		stage('[3/8] Pre-use Scan') {
 			steps { 
 				sh '''
-					bash scripts/scan.sh "$MODEL_DIR" --output "$OUTPUT_DIR/scan_pre.json"
+					bash scripts/scan.sh "$MODEL_DIR" --output-file "$OUTPUT_DIR/scan_pre.json"
 				'''
 			}
 		}
