@@ -85,11 +85,11 @@ echo "Done..."
 
 echo "[4/5] Building pipeline runner image…"
 docker buildx build \
-    --platform linux/amd64 \
     --load \
     -t secure-model-env:latest \
     -f runner.Dockerfile \
     .
+    # can also add this line just below "docker buildx build..." `--platform linux/amd64,linux/arm64/v8 \``
 echo "Runner image built."
 echo "Done..."
 
