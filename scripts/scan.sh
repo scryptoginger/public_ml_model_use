@@ -17,6 +17,6 @@ fi
 OUTPUT_JSON=$3
 
 # run modelscan
-modelscan scan -p "$MODEL_DIR" -r json --o "$OUTPUT_JSON"
+modelscan scan -p "$MODEL_DIR" -r json -o "$OUTPUT_JSON"
 
 echo "Scan complete. Report written to '$OUTPUT_JSON'."
