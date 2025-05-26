@@ -7,8 +7,8 @@ pipeline {
 	}
 
 	environment {
-		MODEL_DIR = "model"
-		OUTPUT_DIR = "output"
+		MODEL_DIR = 'model'
+		OUTPUT_DIR = 'output'
 	}
 
 	stages {
@@ -21,7 +21,11 @@ pipeline {
 		}
 
 		stage('[3/8] Pre-use Scan') {
-			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_pre.json" }
+			steps { 
+				sh '''
+					bash scripts/scan.sh "$MODEL_DIR" --output "$OUTPUT_DIR/scan_pre.json"
+				'''
+			}
 		}
 
 		stage('[4/8] Modify Model') {
