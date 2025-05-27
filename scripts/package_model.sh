@@ -26,18 +26,14 @@ OUTFILE="$OUTPUT_DIR/model.kit"
 rm -f "$MODEL_DIR/Kitfile"
 
 echo "Packing model via KitOps…"
+pushd "$OUTPUT_DIR" >/dev/null   # change working dir
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
+KIT_ARCHIVE=$(ls *.kit | head -n 1)
+popd >/dev/null
 
-
-# Grab the first .kit produced
-SOURCE_KIT=$(ls "$MODEL_DIR"/*.kit | head -n 1)
-
-if [ -z "$SOURCE_KIT" ]; then
-  echo "ERROR: no .kit file found in $MODEL_DIR" >&2
+if [ -z "$KIT_ARCHIVE" ]; then
+  echo "ERROR: kit pack produced no .kit file" >&2
   exit 1
 fi
-
-# Move it where the Jenkins archive stage expects it
-mv "$SOURCE_KIT" "$OUTFILE"
 
 echo "Model packaged via KitOps at: $OUTFILE."
