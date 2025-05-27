@@ -8,7 +8,7 @@ fi
 
 MODEL_DIR=$1
 OUTPUT_DIR=$2
-echo "MODEL_DIR: $MODEL_DIR\n\n"
+
 mkdir -p "$OUTPUT_DIR"
 
 if ! command -v kit &>/dev/null; then
@@ -16,8 +16,9 @@ if ! command -v kit &>/dev/null; then
 	exit 1
 fi
 
+KITFILE_PATH="Kitfile"
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
-kit pack "$MODEL_DIR"
+kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
 
 echo "Model packaged via KitOps"
