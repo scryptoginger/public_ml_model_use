@@ -24,8 +24,9 @@ OUTFILE="$OUTPUT_DIR/model.kit"
 
 rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 
-# Tag to store in local registry
-NAME=$(awk '/^name:/{print $2}' "$KITFILE_PATH")
+# Grab 'name: …' even if it’s indented; default to 'model'
+NAME=$(grep -E '^[[:space:]]*name:' "$KITFILE_PATH" | awk '{print $2}') || true
+NAME=${NAME:-model}
 TAG="local://${NAME}:local"
 
 echo "Packing model via KitOps…"
