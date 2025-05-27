@@ -20,7 +20,6 @@ fi
 
 ROOT_DIR="$(git rev-parse --show-toplevel)"
 KITFILE_PATH="$ROOT_DIR/Kitfile"
-OUTFILE="$OUTPUT_DIR/model.kit"
 
 rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 
@@ -30,10 +29,13 @@ NAME=${NAME:-model}
 TAG="models/${NAME}:local"
 
 echo "Packing model via KitOps…"
-kit pack "$MODEL_DIR" -f "$KITFILE_PATH" -t "$TAG"
+# build into the local Kit Ops registry and capture the digest
+DIGEST=$(kit pack "$MODEL_DIR" \
+                   -f "$KITFILE_PATH" \
+                   -t "$TAG" \
+        | awk '/Model saved:/ {print $3}')
 
-# Export to a portable file
-mkdir -p "$OUTPUT_DIR"
-kit save "$TAG" "$OUTPUT_DIR/model.kit"
+# write the digest as the build artifact
+echo "$DIGEST" > "$OUTPUT_DIR/model.digest"
 
-echo "Model packaged via KitOps at: $OUTPUT_DIR/model.kit"
+echo "ModelKit stored locally with digest $DIGEST"

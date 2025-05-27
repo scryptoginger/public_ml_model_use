@@ -62,8 +62,7 @@ pipeline {
 
 		stage('[7/8] Archive Artifacts') {
 			steps {
-				sh 'ls -l "${OUTPUT_DIR}"'
-				archiveArtifacts artifacts: "${OUTPUT_DIR}/*.kit, ${OUTPUT_DIR}/*.json",
+				archiveArtifacts artifacts: "${OUTPUT_DIR}/*.kit, ${OUTPUT_DIR}/*.json, ${OUTPUT_DIR}/*.digest"
 					fingerprint: true
       		}
 		}
