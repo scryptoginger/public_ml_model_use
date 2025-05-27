@@ -16,15 +16,15 @@ if ! command -v kit &>/dev/null; then
 	exit 1
 fi
 
+# create Kitfile if it isn't present
 if [ ! -f "$MODEL_DIR/Kitfile" ]; then
-	echo "Creating simple Kitfile..."
-	printf '%s\n' \
-	  'schemaVersion: "v1"' \
-	  'name: "model"' \
-	  'version: "0.1.0"' \
-	  'model:' \
-	  '  path: .' > "$MODEL_DIR/Kitfile"
-
+  cat <<-'EOF' > "$MODEL_DIR/Kitfile"
+schemaVersion: "v1"
+name: "model"
+version: "0.1.0"
+model:
+  path: .
+EOF
 fi
 
 OUTFILE="$OUTPUT_DIR/model.kit"
