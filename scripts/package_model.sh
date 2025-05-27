@@ -27,12 +27,13 @@ rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 echo "Packing model via KitOps…"
 
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
+echo "DEBUG: MODEL_DIR: $MODEL_DIR & KITFILE_PATH: $KITFILE_PATH"
 
 # try OUTPUT_DIR, then MODEL_DIR, then current directory
 KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit 2>/dev/null | head -n 1) ||
 KIT_ARCHIVE=$(ls "$MODEL_DIR"/*.kit  2>/dev/null | head -n 1) ||
 KIT_ARCHIVE=$(ls ./*.kit             2>/dev/null | head -n 1) ||
-{ echo "ERROR: kit pack produced no .kit file" >&2; exit 1; }
+{ echo "ERROR: kit pack produced no .kit file && KIT_ARCHIVE: $KIT_ARCHIVE" >&2; exit 1; }
 
 # move it into OUTPUT_DIR (only needed if it wasn’t there already)
 mv "$KIT_ARCHIVE" "$OUTPUT_DIR/"
