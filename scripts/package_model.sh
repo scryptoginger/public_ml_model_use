@@ -27,7 +27,7 @@ rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 # Grab 'name: …' even if it’s indented; default to 'model'
 NAME=$(grep -E '^[[:space:]]*name:' "$KITFILE_PATH" | awk '{print $2}') || true
 NAME=${NAME:-model}
-TAG="local://models/${NAME}:local"
+TAG="models/${NAME}:local"
 
 echo "Packing model via KitOps…"
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH" -t "$TAG"
