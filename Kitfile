@@ -1,0 +1,6 @@
+schemaVersion: "v1"
+name: "public-model-use-POC"
+version: "0.1.0"
+
+model:
+  path: .
