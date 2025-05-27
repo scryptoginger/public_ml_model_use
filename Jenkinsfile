@@ -7,17 +7,25 @@ pipeline {
 	}
 
 	environment {
-		MODEL_DIR = 'model'
-		OUTPUT_DIR = 'output'
+		MODEL_DIR = "${WORKSPACE}/model"
+		OUTPUT_DIR = "${WORKSPACE}/output"
 	}
 
 	stages {
 		stage('[1/9] Prepare Workspace') {
-			steps { sh "mkdir -p $MODEL_DIR $OUTPUT_DIR" }
+			steps { 
+				sh '''
+					mkdir -p "$MODEL_DIR" "$OUTPUT_DIR" 
+				'''
+			}
 		}
 
 		stage('[2/9] Download Model') {
-			steps { sh "python3 scripts/download_model.py --output-dir $MODEL_DIR" }
+			steps { 
+				sh '''
+					python3 scripts/download_model.py --output-dir "$MODEL_DIR"
+				'''
+			}
 		}
 
 		stage('[3/9] Pre-use Scan') {
@@ -29,28 +37,40 @@ pipeline {
 		}
 
 		stage('[4/9] Modify Model') {
-			steps { sh "python3 scripts/modify_model.py --model-dir $MODEL_DIR" }
-		}
-
-		stage('[5/9] Post-use Scan') {
-			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_post.json" }
-		}
-
-		stage('[6/9] Checkout') {
 			steps { 
-				deleteDir()
-				checkout scm
+				sh '''
+					python3 scripts/modify_model.py --model-dir "$MODEL_DIR" 
+				'''
 			}
 		}
 
+		stage('[5/9] Post-use Scan') {
+			steps { 
+				sh '''
+					bash scripts/scan.sh "$MODEL_DIR" --output "$OUTPUT_DIR/scan_post.json" 
+				'''
+			}
+		}
+
+		// stage('[6/9] Checkout') {
+		// 	steps { 
+		// 		deleteDir()
+		// 		checkout scm
+		// 	}
+		// }
+
 		stage('[7/9] Package Model') {
-			steps { sh "bash scripts/package_model.sh model output" }
+			steps { 
+				sh '''
+					bash scripts/package_model.sh "$MODEL_DIR" "$OUTPUT_DIR" 
+				'''
+			}
 		}
 
 		stage('[8/9] Archive Artifacts') {
 			steps {
 				sh 'ls -l "${OUTPUT_DIR}"'
-				archiveArtifacts artifacts: "$OUTPUT_DIR/*.json, $OUTPUT_DIR/*.zip, $OUTPUT_DIR/*.kit",
+				archiveArtifacts artifacts: "${OUTPUT_DIR}/*.json, ${OUTPUT_DIR}/*.zip, ${OUTPUT_DIR}/*.kit",
 					fingerprint: true
       		}
 		}
