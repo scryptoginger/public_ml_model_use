@@ -16,6 +16,15 @@ if ! command -v kit &>/dev/null; then
 	exit 1
 fi
 
+if [ ! -f "$MODEL_DIR/Kitfile" ]; then
+	cat >"$MODEL_DIR/Kitfile" <<'EOF'
+schemaVersion: "v1"
+name: "model"
+model:
+	path: .
+EOF
+fi
+
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
 kit pack "$MODEL_DIR" #|| { echo "KitOps pack failed"; exit 1; }
