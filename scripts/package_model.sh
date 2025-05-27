@@ -17,6 +17,7 @@ if ! command -v kit &>/dev/null; then
 fi
 
 if [ ! -f "$MODEL_DIR/Kitfile" ]; then
+	echo "Creating simple Kitfile..."
 	printf '%s\n' \
 	  'schemaVersion: "v1"' \
 	  'name: "model"' \
@@ -28,7 +29,6 @@ fi
 
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
-kit pack "$MODEL_DIR" -o "$OUTFILE"
-#|| { echo "KitOps pack failed"; exit 1; }
+kit pack "$MODEL_DIR"
 
 echo "Model packaged via KitOps at: $OUTFILE"
