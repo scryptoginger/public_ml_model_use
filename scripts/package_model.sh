@@ -24,32 +24,15 @@ OUTFILE="$OUTPUT_DIR/model.kit"
 
 rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 
+# Tag to store in local registry
+NAME=$(awk '/^name:/{print $2}' "$KITFILE_PATH")
+TAG="local://${NAME}:local"
+
 echo "Packing model via KitOps…"
+kit pack "$MODEL_DIR" -f "$KITFILE_PATH" -t "$TAG"
 
-kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
-echo "DEBUG: kit pack exit status = $?"
-echo "DEBUG: find any archive under workspace:"
-find "$WORKSPACE" -maxdepth 3 -type f -name '*.kit' -o -name '*.zip' || true
+# Export to a portable file
+mkdir -p "$OUTPUT_DIR"
+kit save "$TAG" "$OUTPUT_DIR/model.kit"
 
-# try OUTPUT_DIR, then MODEL_DIR, then current directory
-KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit 2>/dev/null | head -n 1) ||
-KIT_ARCHIVE=$(ls "$MODEL_DIR"/*.kit  2>/dev/null | head -n 1) ||
-KIT_ARCHIVE=$(ls ./*.kit             2>/dev/null | head -n 1) ||
-{ echo "ERROR: kit pack produced no .kit file && KIT_ARCHIVE: $KIT_ARCHIVE" >&2; exit 1; }
-
-# move it into OUTPUT_DIR (only needed if it wasn’t there already)
-mv "$KIT_ARCHIVE" "$OUTPUT_DIR/"
-KIT_ARCHIVE="$OUTPUT_DIR/$(basename "$KIT_ARCHIVE")"
-
-echo "Model packaged via KitOps at: $KIT_ARCHIVE"
-
-
-# pushd "$OUTPUT_DIR" >/dev/null  # change current working dir
-# kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
-# popd >/dev/null
-
-# KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit | head -n 1) || {
-#   echo "ERROR: kit pack produced no .kit file" >&2
-#   exit 1
-# }
-# echo "Model packaged via KitOps at: $OUTFILE."
+echo "Model packaged via KitOps at: $OUTPUT_DIR/model.kit"

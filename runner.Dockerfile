@@ -13,6 +13,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir "modelscan[tensorflow,h5py]"
+RUN pip install --no-cache-dir "kitops-cli>=1.6.0"
 RUN pip install setuptools
 
 # Install KitOps CLI binary

@@ -1,8 +1,10 @@
-# Secure Hugging Face Model Pipeline
-This repository contains a reproducible pipeline to safely download, scan, modify, and package models from public sources (e.g., Hugging Face). It uses Jenkins and Docker to provide an automated, OS-agnostic workflow that meets secure usage and packaging standards.
-
+# Safe Public Model Use: A Hugging Face Example
 ## Overview
-This example pipeline:
+This repository contains a reproducible, relatively plug-and-play pipeline to safely download, scan, modify, and package models from public sources (e.g., Hugging Face). It uses Jenkins and Docker to provide an automated, isolated, OS-agnostic workflow that meets secure usage and packaging standards.
+
+Note: it is imperative that you do your own research and be cautious. Public models can be very dangerous. This example attempts to be an example of how you can do such a process in an automated way with important and powerful tools. 
+
+This README will serve as a guide and explain the steps and processes happening. This example pipeline:
 1. Downloads a lightweight, pre-determined, publicly available Hugging Face model (distilbert-base-uncased)
 2. Runs a pre-use/modification scan using [ModelScan](https://pypi.org/project/modelscan/)
 3. Modifies the model to simulate fine-tuning
@@ -14,7 +16,7 @@ This pipeline is orchestrated using Jenkins and runs inside a Docker container t
 
 ## Prerequisites
 - Docker installed and running: Docker Desktop recommended for Mac/Windows; Linux: `apt install docker.io` (or similar for your distro) 
-- This will use port **8080** by default - edit this in 'docker-compose.yml' if necessary
+- This will use port **8080** by default (or next available port) - edit this in 'docker-compose.yaml' if necessary
 
 ## Quickstart
 ### 1. Clone the Repository
@@ -64,6 +66,9 @@ The `Jenkinsfile` includes the following stages:
 
 #### 6. Archive Artifact
 - Archives the `.kit` file as a build artifact for downstream use.
+
+#### 7. Copies Results
+- Copies the Jenkins job results into `/job_results`, a folder in the project root directory for easier access.
 
 ## ModelScan and KitOps Notes
 - [ModelScan](https://pypi.org/project/modelscan/) is a security scanning tool for ML models.
