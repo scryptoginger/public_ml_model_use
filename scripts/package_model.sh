@@ -22,21 +22,15 @@ ROOT_DIR="$(git rev-parse --show-toplevel)"
 KITFILE_PATH="$ROOT_DIR/Kitfile"
 OUTFILE="$OUTPUT_DIR/model.kit"
 
-# remove any stale Kitfile
-rm -f "$MODEL_DIR/Kitfile"
+rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 
 echo "Packing model via KitOps…"
+pushd "$OUTPUT_DIR" >/dev/null  # change current working dir
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
+popd >/dev/null
 
-# locate the .kit archive from KitOps
-if KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit 2>/dev/null | head -n 1); then
-	:
-elif KIT_ARCHIVE=$(ls "$MODEL_DIR"/*.kit 2>/dev/null | head -n 1); then
-	mv "$KIT_ARCHIVE" "$OUTPUT_DIR/"
-    KIT_ARCHIVE="$OUTPUT_DIR/$(basename "$KIT_ARCHIVE")"
-else
-	echo "ERROR: kit pack produced no .kit file" >&2
-  	exit 1
-fi
-
+KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit | head -n 1) || {
+  echo "ERROR: kit pack produced no .kit file" >&2
+  exit 1
+}
 echo "Model packaged via KitOps at: $OUTFILE."
