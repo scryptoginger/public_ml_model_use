@@ -27,7 +27,9 @@ rm -f "$MODEL_DIR/Kitfile"  # remove any stale Kitfile
 echo "Packing model via KitOps…"
 
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
-echo "DEBUG: MODEL_DIR: $MODEL_DIR & KITFILE_PATH: $KITFILE_PATH"
+echo "DEBUG: kit pack exit status = $?"
+echo "DEBUG: find any archive under workspace:"
+find "$WORKSPACE" -maxdepth 3 -type f -name '*.kit' -o -name '*.zip' || true
 
 # try OUTPUT_DIR, then MODEL_DIR, then current directory
 KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit 2>/dev/null | head -n 1) ||
