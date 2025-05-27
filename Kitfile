@@ -1,10 +1,5 @@
-schemaVersion: "v1"
-kind: ModelKit
+manifestVersion: v1.0.0
 
-metadata:
-  name: "public-model-poc"
-  version: "0.1.0"
-
-spec:
-  model:
-    path: .
+model:
+  name: public-model-usage
+  path: .

@@ -22,14 +22,7 @@ OUTFILE="$OUTPUT_DIR/model.kit"
 
 rm -f "$MODEL_DIR/Kitfile"
 
-echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
-
-echo "DEBUG: current dir = $(pwd)"
-echo "DEBUG: contents:"
-ls -al
-echo "DEBUG: MODEL_DIR = $MODEL_DIR"
-ls -al "$MODEL_DIR" || { echo "DEBUG: $MODEL_DIR does not exist"; exit 1; }
-
+echo "Packing model via KitOps…"
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
 
 # ── Locate the file KitOps just created ──────────────────────────────
