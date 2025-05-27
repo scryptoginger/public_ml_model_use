@@ -21,7 +21,7 @@ if [ ! -f "$MODEL_DIR/Kitfile" ]; then
 schemaVersion: "v1"
 name: "model"
 model:
-	path: .
+  path: .
 EOF
 fi
 
