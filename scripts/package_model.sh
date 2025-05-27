@@ -18,9 +18,7 @@ fi
 
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
-kit pack \
-	--source "$MODEL_DIR" \
-	--output "$OUTFILE" \
+kit pack "$MODEL_DIR" --output "$OUTFILE" \
 	|| { echo "KitOps pack failed"; exit 1; }
 
 echo "Model packaged via KitOps at: $OUTFILE"
