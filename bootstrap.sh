@@ -73,7 +73,6 @@ fi
 
 DIRLEVEL=$(echo "$ENTRY" | awk -F'/' '{print NF-1}')
 tar -xzf tools/kitops.tar.gz --strip-components="$DIRLEVEL" -C tools "$ENTRY"
-# tar -xzf tools/kitops.tar.gz --strip-components=1 -C tools "$ENTRY"
 mv tools/"$(basename "$ENTRY")" tools/kit
 chmod +x tools/kit
 mv tools/kitops.tar.gz tools/tar/
@@ -89,7 +88,6 @@ docker buildx build \
     -t secure-model-env:latest \
     -f runner.Dockerfile \
     .
-    # can also add this line just below "docker buildx build..." `--platform linux/amd64,linux/arm64/v8 \``
 echo "Runner image built."
 echo "Done..."
 
