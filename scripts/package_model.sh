@@ -26,14 +26,17 @@ OUTFILE="$OUTPUT_DIR/model.kit"
 rm -f "$MODEL_DIR/Kitfile"
 
 echo "Packing model via KitOps…"
-pushd "$OUTPUT_DIR" >/dev/null   # change working dir
 kit pack "$MODEL_DIR" -f "$KITFILE_PATH"
-KIT_ARCHIVE=$(ls *.kit | head -n 1)
-popd >/dev/null
 
-if [ -z "$KIT_ARCHIVE" ]; then
-  echo "ERROR: kit pack produced no .kit file" >&2
-  exit 1
+# locate the .kit archive from KitOps
+if KIT_ARCHIVE=$(ls "$OUTPUT_DIR"/*.kit 2>/dev/null | head -n 1); then
+	:
+elif KIT_ARCHIVE=$(ls "$MODEL_DIR"/*.kit 2>/dev/null | head -n 1); then
+	mv "$KIT_ARCHIVE" "$OUTPUT_DIR/"
+    KIT_ARCHIVE="$OUTPUT_DIR/$(basename "$KIT_ARCHIVE")"
+else
+	echo "ERROR: kit pack produced no .kit file" >&2
+  	exit 1
 fi
 
 echo "Model packaged via KitOps at: $OUTFILE."
