@@ -16,19 +16,8 @@ if ! command -v kit &>/dev/null; then
 	exit 1
 fi
 
-# create Kitfile if it isn't present
-if [ ! -f "$MODEL_DIR/Kitfile" ]; then
-  cat <<-'EOF' > "$MODEL_DIR/Kitfile"
-schemaVersion: "v1"
-name: "model"
-version: "0.1.0"
-model:
-  path: .
-EOF
-fi
-
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
 kit pack "$MODEL_DIR"
 
-echo "Model packaged via KitOps at: $OUTFILE"
+echo "Model packaged via KitOps"
