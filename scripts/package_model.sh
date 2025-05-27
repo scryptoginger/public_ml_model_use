@@ -15,7 +15,7 @@ if ! command -v kit &>/dev/null; then
 	echo "ERROR: KitOps CLI not found on PATH" >&2
 	exit 1
 fi
-
+echo MODEL_DIR
 KITFILE_PATH="Kitfile"
 OUTFILE="$OUTPUT_DIR/model.kit"
 echo "Packing '$MODEL_DIR' -> '$OUTFILE' via KitOps…"
