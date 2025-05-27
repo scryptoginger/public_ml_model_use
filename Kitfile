@@ -1,6 +1,10 @@
 schemaVersion: "v1"
-name: "public-model-use-POC"
-version: "0.1.0"
+kind: ModelKit
 
-model:
-  path: .
+metadata:
+  name: "public-model-poc"
+  version: "0.1.0"
+
+spec:
+  model:
+    path: .

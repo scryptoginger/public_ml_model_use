@@ -12,15 +12,15 @@ pipeline {
 	}
 
 	stages {
-		stage('[1/8] Prepare Workspace') {
+		stage('[1/9] Prepare Workspace') {
 			steps { sh "mkdir -p $MODEL_DIR $OUTPUT_DIR" }
 		}
 
-		stage('[2/8] Download Model') {
+		stage('[2/9] Download Model') {
 			steps { sh "python3 scripts/download_model.py --output-dir $MODEL_DIR" }
 		}
 
-		stage('[3/8] Pre-use Scan') {
+		stage('[3/9] Pre-use Scan') {
 			steps { 
 				sh '''
 					bash scripts/scan.sh "$MODEL_DIR" --output "$OUTPUT_DIR/scan_pre.json"
@@ -28,19 +28,26 @@ pipeline {
 			}
 		}
 
-		stage('[4/8] Modify Model') {
+		stage('[4/9] Modify Model') {
 			steps { sh "python3 scripts/modify_model.py --model-dir $MODEL_DIR" }
 		}
 
-		stage('[5/8] Post-use Scan') {
+		stage('[5/9] Post-use Scan') {
 			steps { sh "bash scripts/scan.sh $MODEL_DIR --output $OUTPUT_DIR/scan_post.json" }
 		}
 
-		stage('[6/8] Package Model') {
+		stage('[6/9] Checkout') {
+			steps { 
+				deleteDir()
+				checkout scm
+			}
+		}
+
+		stage('[7/9] Package Model') {
 			steps { sh "bash scripts/package_model.sh model output" }
 		}
 
-		stage('[7/8] Archive Artifacts') {
+		stage('[8/9] Archive Artifacts') {
 			steps {
 				sh 'ls -l "${OUTPUT_DIR}"'
 				archiveArtifacts artifacts: "$OUTPUT_DIR/*.json, $OUTPUT_DIR/*.zip, $OUTPUT_DIR/*.kit",
@@ -48,7 +55,7 @@ pipeline {
       		}
 		}
 
-		stage('[8/8] Export Job Results') {
+		stage('[9/9] Export Job Results') {
 			steps {
 				sh '''
 					mkdir -p /workspace/job_results
